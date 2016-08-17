@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">Identitix</string>
+    <string name="Welcome">Welcome To the Identitx app we are pleased to be at your service</string>
+    <string name="Pin">Customers Pin</string>
+    <string name="chargeAmount"> Charge in NIS</string>
+    <string name="confirm">Take a selfie to Confirm your charge of XXX</string>
+    <string name="picture">Picture</string>
+    <string name="description_info">Info</string>
+    <string name="request_permission">This sample needs camera permission.</string>
+    <string name="camera_error">This device doesn\'t support Camera2 API.</string>
+    <string name="pay"> Snap n Pay</string>
+</resources>
