@@ -46,7 +46,6 @@
         android:textColorHint="#fbf5f5"
         android:focusableInTouchMode="true"
         android:focusable="true"
-        android:autoText="false"
         android:visibility="visible"
         android:layout_marginBottom="61dp"
         android:layout_weight="0.15"

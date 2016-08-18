@@ -23,6 +23,7 @@
         import android.app.FragmentTransaction;
         import android.content.Context;
         import android.content.DialogInterface;
+        import android.content.Intent;
         import android.content.pm.PackageManager;
         import android.content.res.Configuration;
         import android.graphics.ImageFormat;
@@ -226,12 +227,16 @@ public class Camera2Fragment extends Fragment
 
     private String price;
 
+    private String emailFromServer;
+
     private String pin;
 
     private String ipAddress = "192.168.10.1";
     private String port = "1311";
 
     private String serverAddress = "http://" + ipAddress +":" + port + "/api/Search/SearchUser/";
+
+    private String userFullname;
 
 
 
@@ -1019,26 +1024,23 @@ public class Camera2Fragment extends Fragment
                 e.printStackTrace();
             }
 
-
-
-
             txt.setText("");
             //
             // Check the contents of the editView and then send it to server
 
             txt.setHint("Enter your Pin");
 
-            pin = txt.getText().toString();
             // send pin to server!
 
 
-            takePicture();
-//          getFragmentManager().beginTransaction()
-//                            .replace(R.id.container, Camera2Fragment.newInstance())
-//                            .commit();
-
         }else{
-            //takePicture();
+            pin = txt.getText().toString();
+            takePicture();
+            //send picture from the server and recieve back the guys name and email
+            Intent intent = new Intent(getActivity(), QuestionActivity.class);
+            intent.putExtra("clientEmail", emailFromServer);
+            intent.putExtra("userFullName", userFullname);
+            startActivity(intent);
             priceTick = true;
         }
 

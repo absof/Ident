@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageButton
+        android:layout_width="160dp"
+        android:layout_height="80dp"
+        android:src="@mipmap/vbtn"
+        android:textColorHint="#fbf5f5"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:visibility="visible"
+        android:id="@+id/confirm"
+        android:layout_below="@+id/answerText"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/questionText"
+        android:gravity="center"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:textColor="@android:color/holo_blue_dark"
+        android:textColorHighlight="@android:color/primary_text_dark"
+        android:textSize="50dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="63dp" />
+
+
+    <EditText
+        android:gravity="center"
+        android:layout_width="326dp"
+        android:layout_height="90dp"
+        android:inputType="number"
+        android:ems="10"
+        android:id="@+id/answerText"
+        android:background="@drawable/pin_bg"
+        android:textColorHint="#fbf5f5"
+        android:focusableInTouchMode="true"
+        android:focusable="true"
+        android:visibility="visible"
+        android:textColor="#a9a2a2"
+        android:layout_centerVertical="true"
+        android:layout_alignStart="@+id/questionText" />
+
+
+
+
+
+</RelativeLayout>
