@@ -65,12 +65,12 @@
 
         import com.example.abrahamsofer.ident.R;
 
-        import org.apache.http.HttpResponse;
+       /* import org.apache.http.HttpResponse;
         import org.apache.http.client.HttpClient;
         import org.apache.http.client.methods.HttpPost;
         import org.apache.http.entity.ByteArrayEntity;
         import org.apache.http.impl.client.DefaultHttpClient;
-        import org.apache.http.params.BasicHttpParams;
+        import org.apache.http.params.BasicHttpParams; */
         import org.apache.http.params.HttpConnectionParams;
         import org.apache.http.params.HttpParams;
         import org.json.JSONException;
@@ -1019,8 +1019,9 @@ public class Camera2Fragment extends Fragment
             priceTick = false;
             price = txt.getText().toString();
             try {
-                sendText();
-            }catch (UnsupportedEncodingException e) {
+                new ServerSender(view.getContext(),serverAddress, pin, price).execute(mFile);
+                // sendText();
+            }catch (Exception e) {
                 e.printStackTrace();
             }
 
