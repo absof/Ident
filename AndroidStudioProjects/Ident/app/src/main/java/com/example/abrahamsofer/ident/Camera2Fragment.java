@@ -305,6 +305,7 @@ public class Camera2Fragment extends Fragment
         @Override
         public void onImageAvailable(ImageReader reader) {
             mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+
         }
 
     };
@@ -910,7 +911,7 @@ public class Camera2Fragment extends Fragment
                                                @NonNull CaptureRequest request,
                                                @NonNull TotalCaptureResult result) {
 
-                    showToast("Saved: " + mFile);
+                   // showToast("Saved: " + mFile);
                     Log.d(TAG, mFile.toString());
                     unlockFocus();
                 }
@@ -978,9 +979,7 @@ public class Camera2Fragment extends Fragment
         {
             // Defined URL  where to send data
             URL url = new URL(serverAddress);
-
             // Send POST data request
-
 
             URLConnection conn = url.openConnection();
             conn.setDoOutput(true);
@@ -1048,19 +1047,14 @@ public class Camera2Fragment extends Fragment
             pin = txt.getText().toString();
             takePicture();
             try {
+                Thread.sleep(2000); // to avoid crash, waiting until file saved  - temporarily solution.
                 new ServerSender(this.getContext(),serverAddress, pin, price).execute(mFile);
-                // sendText();
+
             }catch (Exception e) {
                 e.printStackTrace();
             }
 
 
-            //send picture from the server and recieve back the guys name and email
-          //  Intent intent = new Intent(getActivity(), QuestionActivity.class);
-          //  intent.putExtra("clientEmail", emailFromServer);
-          //  intent.putExtra("userFullName", userFullname);
-          //  startActivity(intent);
-          //  priceTick = true;
         }
 
     }

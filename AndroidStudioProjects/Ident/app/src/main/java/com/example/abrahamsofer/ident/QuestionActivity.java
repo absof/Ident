@@ -1,6 +1,7 @@
 package com.example.abrahamsofer.ident;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,7 +22,10 @@ public class QuestionActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_question);
         TextView question = (TextView) findViewById(R.id.questionText);
-        question.setText("Hello " + getClientData().get("userFullName") + ", enter your email " +
+        final Bundle b = this.getIntent().getExtras();
+        String name = b.getString("name");
+        final String answer = b.getString("email");
+        question.setText("please enter your email " +
                 "address to confirm your Identitiy ");
 
         final EditText editText = (EditText) findViewById(R.id.answerText);
@@ -32,12 +36,20 @@ public class QuestionActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
                 String email = editText.getText().toString();
-                if (email == null) {
+                Context context = arg0.getContext();
+                if (email.length() == 0) {
                     Toast.makeText(getBaseContext(),"Please enter your email address",Toast.LENGTH_SHORT).show();
-                }else if(email == getClientData().getString("clientEmail")) {
-                    // Launch Success Activity
+                }else if(email.compareTo(answer) == 0) {
+                     // Launch Success Activity
+                    Intent in  = new Intent(context,SuccessActivity.class);
+                    in.putExtras(b);
+                    context.startActivity(in);
+                    ((Activity)context).finish();
                 }else{
                     //Lauch FailActivity
+                    Intent in  = new Intent(context,FailActivity.class);
+                    context.startActivity(in);
+                    ((Activity)context).finish();
                 }
 
 
@@ -46,20 +58,20 @@ public class QuestionActivity extends Activity {
 		});
 
 
-        if (null == savedInstanceState) {
+       /* if (null == savedInstanceState) {
             getFragmentManager().beginTransaction()
                     .replace(R.id.container, Camera2Fragment.newInstance())
                     .commit();
-        }
+        } */
     }
 
 
 
-
+    /*
     public Bundle getClientData() {
         Intent intent = getIntent();
         return intent.getExtras();
-    }
+    }*/
 
 
 

@@ -14,13 +14,6 @@ import android.util.Base64;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
-//import org.apache.http.HttpResponse;
-//import org.apache.http.client.ClientProtocolException;
-//import org.apache.http.client.HttpClient;
-//import org.apache.http.client.methods.HttpPost;
-//import org.apache.http.entity.StringEntity;
-//import org.apache.http.impl.client.DefaultHttpClient;
-//import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -42,6 +35,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 /**
  * Created by abrahamsofer on 16/08/2016.
@@ -81,28 +75,31 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
 
     public static OkHttpClient client = new OkHttpClient();
 
-    public static String post(String url, String json) throws IOException {
+    public static String post(String url, String json) throws Exception {
         RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
                 .build();
-       try {
-           Response response = client.newCall(request).execute();
-           return response.body().string();
-       }
-       catch (Exception e) {
-           e.printStackTrace();
-           return null;
-       }
+        String resString = null;
+        try {
+            Response response = client.newCall(request).execute();
+
+            ResponseBody responseBody = response.body();
+
+            resString = responseBody.string().toString();
+
+        }
+        catch(Exception E){
+            return null;
+        }
+        return resString;
+
     }
 
 
     @Override
     protected Void doInBackground(File... data) {
-
-        //  String url = "http://localhost:52531/";
-
 
         File file = data[0];
         byte bytes[] = new byte[0];
@@ -112,84 +109,51 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
             e.printStackTrace();
         }
 
-        ////
+
         Bitmap bm = BitmapFactory.decodeFile(file.getPath());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
-        ////
-
+        String response = null;
         JSONObject json = new JSONObject();
         try {
             json.put("Pin", pin);
-            //json.put("Image",b);
             json.put("Image", encodedImage);
-            //json.put("Image", Base64.encode(bytes,0));
             String jsonStr = json.toString();
-            String response =  ServerSender.post(this.server,jsonStr);
+            response =  ServerSender.post(this.server,jsonStr);
+            if(response != null) {
+                JSONObject jsonRes  = new JSONObject(response);
+                Bundle userData = new Bundle();
+                userData.putString("name",jsonRes.getString("FirstName"));
+                userData.putString("email",jsonRes.getString("Email"));
 
-        }
-        catch(Exception e) {
-            e.printStackTrace();
-        }
+                if(!jsonRes.isNull("orderID"))
+                    userData.putString("orderID",jsonRes.getString("orderID"));
+                //userData.putString("orderID","12345");
 
-         /*
+                Intent in  = new Intent(context,QuestionActivity.class);
+                in.putExtras(userData);
+                this.context.startActivity(in);
+                ((Activity)this.context).finish();
 
-            HttpURLConnection con = (HttpURLConnection) new URL(this.server).openConnection();
-            con.setRequestProperty("Content-Type", "application/json");
-            con.setRequestProperty("Accept", "application/json");
-            // con.setRequestProperty("charset","UTF-8");
-            con.setRequestMethod("POST");
-            con.setDoOutput(true);
-            con.setDoInput(true);
-            OutputStreamWriter wr= new OutputStreamWriter(con.getOutputStream());
-            wr.write(json.toString());
-            wr.flush();
-
-            if (con.getResponseCode() != HttpURLConnection.HTTP_CREATED) {
-
-                //throw new RuntimeException("Failed : HTTP error code : "
-                //        + con.getResponseCode());
             }
             else {
-                if(con.getResponseCode() == HttpURLConnection.HTTP_OK){
-                    StringBuilder sb = new StringBuilder();
-                    BufferedReader br = new BufferedReader(
-                            new InputStreamReader(con.getInputStream(), "utf-8"));
-                    String line = null;
-                    while ((line = br.readLine()) != null) {
-                        sb.append(line + "\n");
-                    }
-                    br.close();
-                    String responseStr = sb.toString();
-                    if(responseStr.compareTo("NotFound") ==  0 || responseStr.toLowerCase().contains("exception") ) {
-                        Intent in  = new Intent(context,FailActivity.class);
-                        context.startActivity(in);
-                        ((Activity)context).finish();
-                    }
-                    else {
-                        Bundle userData = new Bundle();
-                        userData.putString("name",responseStr);
-                        Intent in  = new Intent(context,SuccessActivity.class);
-                        in.putExtras(userData);
-                        context.startActivity(in);
-                        ((Activity)context).finish();
-                    }
-                }
+                throw new Exception();
             }
-
-
-
-
-        } catch (JSONException|IOException e) {
-            e.printStackTrace();
         }
-
-          */
-       /* finally {
-        } */
-        return null;
+        catch(Exception e) {
+            Intent in  = new Intent(context,FailActivity.class);
+            context.startActivity(in);
+            ((Activity)context).finish();
+        }
+        finally {
+            try{
+                baos.close();
+            }
+            catch (Exception e){};
+        }
+      return null;
     }
 
 

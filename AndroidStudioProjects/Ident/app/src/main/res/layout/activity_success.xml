@@ -31,6 +31,18 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/editText6"
+            android:text=""
+            android:layout_gravity="left|top|bottom|center|right"
+            android:textColor="#fdfafa"
+            android:textSize="24dp"
+            android:layout_alignTop="@+id/editText2"
+            android:layout_alignStart="@+id/editText3"
+            android:layout_marginTop="-50dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/editText2"
             android:text="@string/success"
             android:layout_gravity="top|bottom|center|left"
@@ -73,7 +85,8 @@
             android:layout_alignStart="@+id/editText3"
             android:background="#ff3d59"
             android:textColor="#faf7f7"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            android:text="OK" />
 
 
 

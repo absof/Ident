@@ -8,21 +8,24 @@
         android:layout_height="80dp"
         android:src="@mipmap/vbtn"
         android:textColorHint="#fbf5f5"
-        android:focusableInTouchMode="true"
+        android:focusableInTouchMode="false"
         android:focusable="true"
+        android:clickable="true"
+        android:descendantFocusability="afterDescendants"
         android:visibility="visible"
         android:id="@+id/confirm"
         android:layout_below="@+id/answerText"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15px" />
 
     <TextView
         android:id="@+id/questionText"
         android:gravity="center"
         android:layout_width="300dp"
-        android:layout_height="100dp"
+        android:layout_height="130dp"
         android:textColor="@android:color/holo_blue_dark"
         android:textColorHighlight="@android:color/primary_text_dark"
-        android:textSize="50dp"
+        android:textSize="30dp"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="63dp" />
@@ -32,7 +35,6 @@
         android:gravity="center"
         android:layout_width="326dp"
         android:layout_height="90dp"
-        android:inputType="number"
         android:ems="10"
         android:id="@+id/answerText"
         android:background="@drawable/pin_bg"
@@ -41,8 +43,10 @@
         android:focusable="true"
         android:visibility="visible"
         android:textColor="#a9a2a2"
-        android:layout_centerVertical="true"
-        android:layout_alignStart="@+id/questionText" />
+        android:layout_gravity="top"
+        android:layout_below="@+id/questionText"
+        android:layout_alignStart="@+id/questionText"
+        android:layout_alignEnd="@+id/questionText" />
 
 
 
