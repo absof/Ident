@@ -15,6 +15,7 @@
   package com.example.abrahamsofer.ident;
 
         import android.Manifest;
+        import android.annotation.TargetApi;
         import android.app.Activity;
         import android.app.AlertDialog;
         import android.app.Dialog;
@@ -43,6 +44,7 @@
         import android.hardware.camera2.params.StreamConfigurationMap;
         import android.media.Image;
         import android.media.ImageReader;
+        import android.os.Build;
         import android.os.Bundle;
         import android.os.Handler;
         import android.os.HandlerThread;
@@ -231,10 +233,12 @@ public class Camera2Fragment extends Fragment
 
     private String pin;
 
-    private String ipAddress = "192.168.10.1";
+   // private String ipAddress = "192.168.10.100";
+   //private String ipAddress = "192.168.43.216";
+    private String ipAddress = "52.169.29.5";
     private String port = "1311";
 
-    private String serverAddress = "http://" + ipAddress +":" + port + "/api/Search/SearchUser/";
+    private String serverAddress = "http://" + ipAddress +":" + port + "/api/Search/SearchUser";
 
     private String userFullname;
 
@@ -871,6 +875,7 @@ public class Camera2Fragment extends Fragment
      * Capture a still picture. This method should be called when we get a response in
      * {@link #mCaptureCallback} from both {@link #lockFocus()}.
      */
+    @TargetApi(Build.VERSION_CODES.M)
     private void captureStillPicture() {
         try {
             final Activity activity = getActivity();
@@ -888,8 +893,14 @@ public class Camera2Fragment extends Fragment
             setAutoFlash(captureBuilder);
 
             // Orientation
-            int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
-            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
+           // int rotation = activity.getWindowManager().getDefaultDisplay().getRotation();
+           // captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, getOrientation(rotation));
+
+            CameraManager manager = (CameraManager) getContext().getSystemService(Context.CAMERA_SERVICE);
+            CameraCharacteristics cameraCharacteristics = manager.getCameraCharacteristics("" + mCameraDevice.getId());
+            int rotation = cameraCharacteristics.get(CameraCharacteristics.SENSOR_ORIENTATION);
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation);
+
 
             CameraCaptureSession.CaptureCallback CaptureCallback
                     = new CameraCaptureSession.CaptureCallback() {
@@ -1013,17 +1024,13 @@ public class Camera2Fragment extends Fragment
 
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onClick(View view) {
         if (priceTick) {
             priceTick = false;
             price = txt.getText().toString();
-            try {
-                new ServerSender(view.getContext(),serverAddress, pin, price).execute(mFile);
-                // sendText();
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
+
 
             txt.setText("");
             //
@@ -1035,14 +1042,25 @@ public class Camera2Fragment extends Fragment
 
 
         }else{
+
+
+
             pin = txt.getText().toString();
             takePicture();
+            try {
+                new ServerSender(this.getContext(),serverAddress, pin, price).execute(mFile);
+                // sendText();
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
             //send picture from the server and recieve back the guys name and email
-            Intent intent = new Intent(getActivity(), QuestionActivity.class);
-            intent.putExtra("clientEmail", emailFromServer);
-            intent.putExtra("userFullName", userFullname);
-            startActivity(intent);
-            priceTick = true;
+          //  Intent intent = new Intent(getActivity(), QuestionActivity.class);
+          //  intent.putExtra("clientEmail", emailFromServer);
+          //  intent.putExtra("userFullName", userFullname);
+          //  startActivity(intent);
+          //  priceTick = true;
         }
 
     }

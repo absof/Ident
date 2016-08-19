@@ -1,6 +1,7 @@
 package com.example.abrahamsofer.ident;
 
 import android.app.Activity;
+import android.app.DownloadManager;
 import android.app.ProgressDialog;
 //import android.content.Intent;
 import android.content.Context;
@@ -33,7 +34,14 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import javax.net.ssl.HttpsURLConnection;
+
+
+import java.io.IOException;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by abrahamsofer on 16/08/2016.
@@ -69,6 +77,26 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
         return false;
     }
 
+    public static MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+
+    public static OkHttpClient client = new OkHttpClient();
+
+    public static String post(String url, String json) throws IOException {
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+       try {
+           Response response = client.newCall(request).execute();
+           return response.body().string();
+       }
+       catch (Exception e) {
+           e.printStackTrace();
+           return null;
+       }
+    }
+
 
     @Override
     protected Void doInBackground(File... data) {
@@ -94,14 +122,21 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
 
         JSONObject json = new JSONObject();
         try {
-            json.put("Pin",pin);
+            json.put("Pin", pin);
             //json.put("Image",b);
-            json.put("Image",encodedImage);
+            json.put("Image", encodedImage);
             //json.put("Image", Base64.encode(bytes,0));
+            String jsonStr = json.toString();
+            String response =  ServerSender.post(this.server,jsonStr);
 
-            // StringEntity se = new StringEntity(json.toString());
-            // HttpClient httpclient = new DefaultHttpClient();
-            HttpsURLConnection con = (HttpsURLConnection) new URL(this.server).openConnection();
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+
+         /*
+
+            HttpURLConnection con = (HttpURLConnection) new URL(this.server).openConnection();
             con.setRequestProperty("Content-Type", "application/json");
             con.setRequestProperty("Accept", "application/json");
             // con.setRequestProperty("charset","UTF-8");
@@ -145,26 +180,15 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
             }
 
 
-            //HttpPost httpPost = new HttpPost(this.server);
-            // httpPost.setEntity(se);
-            // httpPost.setHeader("Accept", "application/json");
-            // httpPost.setHeader("Content-type", "application/json");
-            // HttpResponse response;
-           /* try {
-                response = httpclient.execute(httpPost);
-            }
-            catch(Exception e) {
-                response = null;
-            }*/
 
 
         } catch (JSONException|IOException e) {
             e.printStackTrace();
         }
 
-
-        finally {
-        }
+          */
+       /* finally {
+        } */
         return null;
     }
 
