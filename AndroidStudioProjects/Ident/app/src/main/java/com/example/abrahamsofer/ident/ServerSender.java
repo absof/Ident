@@ -8,8 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Base64;
@@ -99,28 +97,6 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
 
     }
 
-    public static float getDegree(String exifOrientation) {
-        float degree = 0;
-        if (exifOrientation.equals("6"))
-            degree = 90;
-        else if (exifOrientation.equals("3"))
-            degree = 180;
-        else if (exifOrientation.equals("8"))
-            degree = 270;
-        return degree;
-    }
-    public static Bitmap createRotatedBitmap(Bitmap bm, float degree) {
-        Bitmap bitmap = null;
-        if (degree != 0) {
-            Matrix matrix = new Matrix();
-            matrix.preRotate(degree);
-            bitmap = Bitmap.createBitmap(bm, 0, 0, bm.getWidth(),
-                    bm.getHeight(), matrix, true);
-        }
-
-        return bitmap;
-    }
-
 
     @Override
     protected Void doInBackground(File... data) {
@@ -134,26 +110,9 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
         }
 
 
-
-
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        Bitmap bm = BitmapFactory.decodeFile(file.getPath(),opts);
-
-        float degree = 0;
-        ExifInterface exif = null;
-        try {
-            exif = new ExifInterface(file.getPath());
-            String exifOrientation = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-            degree = getDegree(exifOrientation);
-            if(degree != 0)
-                bm = createRotatedBitmap(bm, degree);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Bitmap bm = BitmapFactory.decodeFile(file.getPath());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-       // 0-100. 0 meaning compress for small size, 100 meaning compress for max quality
-        bm.compress(Bitmap.CompressFormat.JPEG, 80, baos); //bm is the bitmap object
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
         String response = null;
