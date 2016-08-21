@@ -501,7 +501,7 @@ public class Camera2Fragment extends Fragment
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        mFile = new File(getActivity().getExternalFilesDir(null), "pic.jpg");
+        mFile = new File(getActivity().getExternalFilesDir(null), "pic_" + System.currentTimeMillis() + ".jpg");
     }
 
     @Override
@@ -638,6 +638,7 @@ public class Camera2Fragment extends Fragment
 
                 // We fit the aspect ratio of TextureView to the size of preview we picked.
                 int orientation = getResources().getConfiguration().orientation;
+
                 if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
                     mTextureView.setAspectRatio(
                             mPreviewSize.getWidth(), mPreviewSize.getHeight());
@@ -680,6 +681,8 @@ public class Camera2Fragment extends Fragment
             if (!mCameraOpenCloseLock.tryAcquire(2500, TimeUnit.MILLISECONDS)) {
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
+            //manager.setTorchMode(0,true); 0 is the back camera, 1 is the front camera
+
             manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {
             e.printStackTrace();
@@ -1092,8 +1095,10 @@ public class Camera2Fragment extends Fragment
             buffer.get(bytes);
             FileOutputStream output = null;
             try {
+
                 output = new FileOutputStream(mFile);
                 output.write(bytes);
+              //  output.flush();
                 //This is where i need to send the FileOutPutStreamToServer
 
             } catch (IOException e) {
