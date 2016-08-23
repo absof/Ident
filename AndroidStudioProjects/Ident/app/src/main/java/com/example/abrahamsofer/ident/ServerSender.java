@@ -159,7 +159,8 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
         String response = null;
         JSONObject json = new JSONObject();
         try {
-            json.put("Pin", pin);
+           // json.put("Pin", pin);
+            json.put("Pin","cinema_city");
             json.put("Image", encodedImage);
             String jsonStr = json.toString();
             response =  ServerSender.post(this.server,jsonStr);

@@ -224,9 +224,9 @@ public class Camera2Fragment extends Fragment
 
     // keeps track of wether at pin or price stage
     private boolean priceTick = true;
-
+    Boolean type = true; //false front Camera
     private ImageButton button;
-
+    private ImageButton modeCamera;
     private String price;
 
     private String emailFromServer;
@@ -488,13 +488,30 @@ public class Camera2Fragment extends Fragment
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         txt = (EditText) view.findViewById(R.id.editText);
         button = (ImageButton) view.findViewById(R.id.picture);
+        modeCamera = (ImageButton) view.findViewById(R.id.imageButton);
         return view;
     }
+
+
 
     @Override
     public void onViewCreated(final View view, Bundle savedInstanceState) {
        button.setOnClickListener(this);
-        //txt.setOnClickListener(this);
+        modeCamera.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                closeCamera();
+                if(type){
+                    type = false;
+                }
+                else {
+                  type = true;
+                }
+                openCamera(mTextureView.getWidth(), mTextureView.getHeight());
+                //setUpCameraOutputs(mTextureView.getWidth(), mTextureView.getHeight());
+            }
+        });
     }
 
     @Override
@@ -563,8 +580,11 @@ public class Camera2Fragment extends Fragment
                 CameraCharacteristics characteristics
                         = manager.getCameraCharacteristics(cameraId);
 
+
+
                 // We don't use a front facing camera in this sample.
                 Integer facing = characteristics.get(CameraCharacteristics.LENS_FACING);
+                //if (facing != null && facing == CameraCharacteristics.LENS_FACING_BACK) { continue; }
                 if (facing != null && facing == CameraCharacteristics.LENS_FACING_FRONT) {
                     continue;
                 }
@@ -682,6 +702,13 @@ public class Camera2Fragment extends Fragment
                 throw new RuntimeException("Time out waiting to lock camera opening.");
             }
             //manager.setTorchMode(0,true); 0 is the back camera, 1 is the front camera
+            if(type) {
+                mCameraId = "0";
+            }
+            else
+            {
+                mCameraId = "1";
+            }
 
             manager.openCamera(mCameraId, mStateCallback, mBackgroundHandler);
         } catch (CameraAccessException e) {

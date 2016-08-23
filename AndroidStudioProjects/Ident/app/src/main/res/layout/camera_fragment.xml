@@ -53,5 +53,17 @@
         android:layout_above="@+id/picture"
         android:layout_centerHorizontal="true" />
 
+    <ImageButton
+        style="@android:style/Widget.Material.Light.Button.Borderless"
+        android:id="@+id/imageButton"
+        android:contentDescription="@string/description_info"
+        android:layout_width="54dp"
+        android:layout_height="48dp"
+        android:layout_gravity="center_horizontal|bottom"
+        android:padding="20dp"
+        android:src="@android:drawable/ic_menu_camera"
+        android:layout_alignTop="@+id/picture"
+        android:layout_toStartOf="@+id/editText" />
+
 
 </RelativeLayout>
