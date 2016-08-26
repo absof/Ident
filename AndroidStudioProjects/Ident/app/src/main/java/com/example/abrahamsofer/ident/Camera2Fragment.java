@@ -236,6 +236,7 @@ public class Camera2Fragment extends Fragment
    // private String ipAddress = "192.168.10.100";
    //private String ipAddress = "192.168.43.216";
     private String ipAddress = "52.169.29.5";
+   //private String ipAddress = "10.100.102.3";
     private String port = "1311";
 
     private String serverAddress = "http://" + ipAddress +":" + port + "/api/Search/SearchUser";

@@ -170,8 +170,8 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
                 userData.putString("name",jsonRes.getString("FirstName"));
                 userData.putString("email",jsonRes.getString("Email"));
 
-                if(!jsonRes.isNull("orderID"))
-                    userData.putString("orderID",jsonRes.getString("orderID"));
+                if(!jsonRes.isNull("OrderID"))
+                    userData.putString("orderID",jsonRes.getString("OrderID"));
                 //userData.putString("orderID","12345");
 
                 Intent in  = new Intent(context,QuestionActivity.class);
