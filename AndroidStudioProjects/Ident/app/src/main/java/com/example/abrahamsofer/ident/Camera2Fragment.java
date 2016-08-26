@@ -42,8 +42,10 @@
         import android.hardware.camera2.CaptureResult;
         import android.hardware.camera2.TotalCaptureResult;
         import android.hardware.camera2.params.StreamConfigurationMap;
+        import android.media.AudioManager;
         import android.media.Image;
         import android.media.ImageReader;
+        import android.media.ToneGenerator;
         import android.os.Build;
         import android.os.Bundle;
         import android.os.Handler;
@@ -224,7 +226,7 @@ public class Camera2Fragment extends Fragment
      */
 
     // keeps track of wether at pin or price stage
-    //private boolean priceTick = true; not used for trial we only have pin
+    //private boolean priceTick = true;
 
 
     private ImageView[] corners = new ImageView[4];
@@ -233,7 +235,7 @@ public class Camera2Fragment extends Fragment
     Boolean type = true; //false front Camera
     private ImageButton button;
     private ImageButton modeCamera;
-    private String price = "0"; //not relevant for trial
+    private String price;
 
     private String emailFromServer;
 
@@ -1067,21 +1069,19 @@ public class Camera2Fragment extends Fragment
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onClick(View view) {
-        // Check the contents of the editView and then send it to server
+            // send pin to server!
 
-        txt.setHint("Enter your Pin");
-
-        pin = txt.getText().toString();
-        takePicture();
+            pin = txt.getText().toString();
+            takePicture();
+            ToneGenerator toneG = new ToneGenerator(AudioManager.STREAM_ALARM, 100);
+            toneG.startTone(ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 200);
         try {
-            Thread.sleep(2000); // to avoid crash, waiting until file saved  - temporarily solution.
-            new ServerSender(this.getContext(),serverAddress, pin, price).execute(mFile);
+                Thread.sleep(2000); // to avoid crash, waiting until file saved  - temporarily solution.
+                new ServerSender(this.getContext(),serverAddress, pin, price).execute(mFile);
 
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
 
 
     }

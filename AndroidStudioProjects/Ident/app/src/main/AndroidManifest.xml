@@ -8,7 +8,7 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/logo_landscape"
+        android:icon="@mipmap/logo_1_w3x"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">

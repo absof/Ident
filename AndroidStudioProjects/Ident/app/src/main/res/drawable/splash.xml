@@ -2,12 +2,13 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:drawable="@color/white"/>
+        android:drawable="@color/grey"/>
 
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@mipmap/identitix"/>
+            android:background="#292c3d"
+            android:src="@mipmap/logo_1_w3x"/>
     </item>
 
 </layer-list>

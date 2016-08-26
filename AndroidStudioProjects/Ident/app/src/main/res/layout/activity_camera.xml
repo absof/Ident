@@ -16,7 +16,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000"
-    android:src = "@mipmap/logo_landscape"
+    android:src = "@mipmap/logo_1_w3x"
 tools:context="com.example.abrahamsofer.ident.CameraActivity">
 
     </RelativeLayout>
