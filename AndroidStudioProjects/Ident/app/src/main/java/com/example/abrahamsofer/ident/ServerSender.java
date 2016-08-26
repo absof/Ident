@@ -3,7 +3,6 @@ package com.example.abrahamsofer.ident;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.app.ProgressDialog;
-//import android.content.Intent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -42,12 +41,14 @@ import okhttp3.ResponseBody;
 /**
  * Created by abrahamsofer on 16/08/2016.
  */
-public class ServerSender extends AsyncTask<File, Void, Void> {
+public class ServerSender extends AsyncTask<File
+        , Void, Void> {
 
     private String server;
     private String pin;
     private String price;
     private Context context;
+
     public ServerSender(Context context,final String server, String pin, String price) {
         this.context = context;
         this.server = server;
@@ -55,23 +56,7 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
         this.price = price;
     }
 
-    public boolean upload(File file) {
-        Log.e("path", "----------------" + file);
 
-        // Image
-        Bitmap bm = BitmapFactory.decodeFile(file.toString());
-        ByteArrayOutputStream bao = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG, 90, bao);
-        byte[] ba = bao.toByteArray();
-        //ba1 = Base64.encodeBytes(ba);
-
-        //Log.e("base64", "-----" + ba1);
-
-        // Upload image to server
-        // new ServerSender().execute();
-
-        return false;
-    }
 
     public static MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
@@ -99,18 +84,21 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
 
     }
 
-    public static float getDegree(String exifOrientation) {
-        float degree = 0;
-        if (exifOrientation.equals("6"))
-            degree = 90;
-        else if (exifOrientation.equals("3"))
-            degree = 180;
-        else if (exifOrientation.equals("8"))
-            degree = 270;
-        return degree;
-    }
+//    public static float getDegree(String exifOrientation) {
+//        float degree = 0;
+//        if (exifOrientation.equals("6"))
+//            degree = 90;
+//        else if (exifOrientation.equals("3"))
+//            degree = 180;
+//        else if (exifOrientation.equals("8"))
+//            degree = 270;
+//        return degree;
+//    }
     public static Bitmap createRotatedBitmap(Bitmap bm, float degree) {
         Bitmap bitmap = null;
+        if (bitmap == null) {
+            throw new NullPointerException("The Bitmap given as an argument to the function is null");
+        }
         if (degree != 0) {
             Matrix matrix = new Matrix();
             matrix.preRotate(degree);
@@ -123,9 +111,9 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
 
 
     @Override
-    protected Void doInBackground(File... data) {
+    protected Void doInBackground(File... inData) {
+        File file = inData[0];
 
-        File file = data[0];
         byte bytes[] = new byte[0];
         try {
             bytes = FileUtils.readFileToByteArray(file);
@@ -134,32 +122,15 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
         }
 
 
-
-
-        BitmapFactory.Options opts = new BitmapFactory.Options();
-        Bitmap bm = BitmapFactory.decodeFile(file.getPath(),opts);
-
-        float degree = 0;
-        ExifInterface exif = null;
-        try {
-            exif = new ExifInterface(file.getPath());
-            String exifOrientation = exif.getAttribute(ExifInterface.TAG_ORIENTATION);
-            degree = getDegree(exifOrientation);
-            if(degree != 0)
-                bm = createRotatedBitmap(bm, degree);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
+        Bitmap bm = BitmapFactory.decodeFile(file.getPath());
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-       // 0-100. 0 meaning compress for small size, 100 meaning compress for max quality
-        bm.compress(Bitmap.CompressFormat.JPEG, 80, baos); //bm is the bitmap object
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos); //bm is the bitmap object
         byte[] b = baos.toByteArray();
         String encodedImage = Base64.encodeToString(b, Base64.DEFAULT);
         String response = null;
         JSONObject json = new JSONObject();
         try {
-            json.put("Pin", pin);
+            json.put("Pin", "cinema_city");
             json.put("Image", encodedImage);
             String jsonStr = json.toString();
             response =  ServerSender.post(this.server,jsonStr);
@@ -194,12 +165,36 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
             }
             catch (Exception e){};
         }
-      return null;
+        return null;
     }
 
 
-    public void sendFile(Context c,File file) {
+
+
+    public void sendData(Context c,File file) {
         new ServerSender(c,server, pin, price).execute(file);
+    }
+    public static int calculateInSampleSize(
+            BitmapFactory.Options options, int reqWidth, int reqHeight) {
+        // Raw height and width of image
+        final int height = options.outHeight;
+        final int width = options.outWidth;
+        int inSampleSize = 1;
+
+        if (height > reqHeight || width > reqWidth) {
+
+            final int halfHeight = height / 2;
+            final int halfWidth = width / 2;
+
+            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+            // height and width larger than the requested height and width.
+            while ((halfHeight / inSampleSize) >= reqHeight
+                    && (halfWidth / inSampleSize) >= reqWidth) {
+                inSampleSize *= 2;
+            }
+        }
+
+        return inSampleSize;
     }
 
 

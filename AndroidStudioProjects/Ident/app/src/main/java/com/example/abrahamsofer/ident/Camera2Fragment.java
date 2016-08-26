@@ -27,6 +27,7 @@
         import android.content.Intent;
         import android.content.pm.PackageManager;
         import android.content.res.Configuration;
+        import android.graphics.Color;
         import android.graphics.ImageFormat;
         import android.graphics.Matrix;
         import android.graphics.Point;
@@ -62,36 +63,18 @@
         import android.view.ViewGroup;
         import android.widget.EditText;
         import android.widget.ImageButton;
+        import android.widget.ImageView;
         import android.widget.TextView;
         import android.widget.Toast;
 
         import com.example.abrahamsofer.ident.R;
-
-       /* import org.apache.http.HttpResponse;
-        import org.apache.http.client.HttpClient;
-        import org.apache.http.client.methods.HttpPost;
-        import org.apache.http.entity.ByteArrayEntity;
-        import org.apache.http.impl.client.DefaultHttpClient;
-        import org.apache.http.params.BasicHttpParams; */
-        import org.apache.http.params.HttpConnectionParams;
-        import org.apache.http.params.HttpParams;
-        import org.json.JSONException;
-        import org.json.JSONObject;
 
         import java.io.BufferedInputStream;
         import java.io.BufferedReader;
         import java.io.File;
         import java.io.FileOutputStream;
         import java.io.IOException;
-        import java.io.InputStream;
-        import java.io.InputStreamReader;
-        import java.io.OutputStreamWriter;
-        import java.io.UnsupportedEncodingException;
-        import java.net.HttpURLConnection;
-        import java.net.InetAddress;
-        import java.net.URL;
-        import java.net.URLConnection;
-        import java.net.URLEncoder;
+
         import java.nio.ByteBuffer;
         import java.util.ArrayList;
         import java.util.Arrays;
@@ -227,6 +210,8 @@ public class Camera2Fragment extends Fragment
 
     private ImageButton button;
 
+    private ImageView[] corners = new ImageView[4];
+
     private String price;
 
     private String emailFromServer;
@@ -302,13 +287,39 @@ public class Camera2Fragment extends Fragment
     private final ImageReader.OnImageAvailableListener mOnImageAvailableListener
             = new ImageReader.OnImageAvailableListener() {
 
+        @TargetApi(Build.VERSION_CODES.M)
         @Override
         public void onImageAvailable(ImageReader reader) {
-            mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage(), mFile));
+            Image mImage = reader.acquireNextImage();
+            ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
+            byte[] inData = new byte[buffer.remaining()];
+            buffer.get(inData);
+            FileOutputStream output = null;
+            try {
+                output = new FileOutputStream(mFile);
+                output.write(inData);
+                //This is where i need to send the FileOutPutStreamToServer
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                mImage.close();
+                if (null != output) {
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            new ServerSender(getContext(),serverAddress, pin, price).execute(mFile);
+            // mImage.close();
+            // mBackgroundHandler.post(new ImageSaver(reader.acquireNextImage()));
 
         }
 
     };
+
 
     /**
      * {@link CaptureRequest.Builder} for the camera preview
@@ -488,6 +499,15 @@ public class Camera2Fragment extends Fragment
         mTextureView = (AutoFitTextureView) view.findViewById(R.id.texture);
         txt = (EditText) view.findViewById(R.id.editText);
         button = (ImageButton) view.findViewById(R.id.picture);
+        corners[0] = (ImageView) view.findViewById(R.id.tlc);
+        corners[1] = (ImageView) view.findViewById(R.id.trc);
+        corners[2] = (ImageView) view.findViewById(R.id.lbc);
+        corners[3] = (ImageView) view.findViewById(R.id.rbc);
+
+
+
+
+
         return view;
     }
 
@@ -921,10 +941,11 @@ public class Camera2Fragment extends Fragment
             };
 
             mCaptureSession.stopRepeating();
-            mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
+           mCaptureSession.capture(captureBuilder.build(), CaptureCallback, null);
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+        //this.unlockFocus();
     }
 
     /**
@@ -962,70 +983,6 @@ public class Camera2Fragment extends Fragment
         }
     }
 
-    // Create GetText Metod
-    public  void  sendText()  throws UnsupportedEncodingException
-    {
-        // Get user defined values
-        // Create data variable for sent values to server
-
-        JSONObject toSend   = new JSONObject();
-        try {
-            toSend.put("Price", price);
-        }catch (JSONException e) {
-            e.printStackTrace();
-        }
-        String text = "";
-        BufferedReader reader=null;
-
-        // Send data
-        try
-        {
-            // Defined URL  where to send data
-            URL url = new URL(serverAddress);
-            // Send POST data request
-
-            URLConnection conn = url.openConnection();
-            conn.setDoOutput(true);
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(toSend.toString());
-            wr.flush();
-
-            // Get the server response
-
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-
-            // Read Server Response
-            while((line = reader.readLine()) != null)
-            {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-
-
-            text = sb.toString();
-        }
-        catch(Exception ex)
-        {
-            ex.printStackTrace();
-        }
-        finally
-        {
-            try
-            {
-
-                reader.close();
-            }
-
-            catch(Exception ex) {}
-        }
-
-        // Show response on activity
-
-
-    }
-
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onClick(View view) {
@@ -1048,10 +1005,13 @@ public class Camera2Fragment extends Fragment
 
 
             pin = txt.getText().toString();
+            button.setColorFilter(Color.parseColor("#faf7f7"));
             takePicture();
             try {
-                Thread.sleep(2000); // to avoid crash, waiting until file saved  - temporarily solution.
-                new ServerSender(this.getContext(),serverAddress, pin, price).execute(mFile);
+                //Thread.sleep(2000); // to avoid crash, waiting until file saved  - temporarily solution.
+              //  ByteBuffer buffer = mImageReader.acquireLatestImage().getPlanes()[0].getBuffer();
+              //  byte[] data = new byte[buffer.remaining()];
+              //  new ServerSender(this.getContext(),serverAddress, pin, price).execute(data);
 
             }catch (Exception e) {
                 e.printStackTrace();
@@ -1081,11 +1041,11 @@ public class Camera2Fragment extends Fragment
         /**
          * The file we save the image into.
          */
-        private final File mFile;
 
-        public ImageSaver(Image image, File file) {
+
+        public ImageSaver(Image image) {
             mImage = image;
-            mFile = file;
+
         }
 
         @Override
@@ -1094,16 +1054,16 @@ public class Camera2Fragment extends Fragment
             byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
             FileOutputStream output = null;
-            try {
-
-                output = new FileOutputStream(mFile);
-                output.write(bytes);
-              //  output.flush();
-                //This is where i need to send the FileOutPutStreamToServer
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
+//            try {
+//
+//                output = new FileOutputStream(mFile);
+//                output.write(bytes);
+//              //  output.flush();
+//                //This is where i need to send the FileOutPutStreamToServer
+//
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
                 mImage.close();
                 if (null != output) {
                     try {
@@ -1112,7 +1072,7 @@ public class Camera2Fragment extends Fragment
                         e.printStackTrace();
                     }
                 }
-            }
+//            }
         }
 
     }
