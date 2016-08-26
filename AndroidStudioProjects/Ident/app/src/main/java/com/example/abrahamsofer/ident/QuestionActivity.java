@@ -39,7 +39,8 @@ public class QuestionActivity extends Activity {
                 Context context = arg0.getContext();
                 if (email.length() == 0) {
                     Toast.makeText(getBaseContext(),"Please enter your email address",Toast.LENGTH_SHORT).show();
-                }else if(email.compareTo(answer) == 0) {
+                }else if(email.toUpperCase().compareTo(answer.toUpperCase()) == 0) {
+
                      // Launch Success Activity
                     Intent in  = new Intent(context,SuccessActivity.class);
                     in.putExtras(b);

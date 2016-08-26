@@ -24,6 +24,8 @@ package com.example.abrahamsofer.ident;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
 
 public class CameraActivity extends Activity {
@@ -31,6 +33,9 @@ public class CameraActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         setContentView(R.layout.activity_camera);
         EditText editText = (EditText) findViewById(R.id.editText);
         if (null == savedInstanceState) {

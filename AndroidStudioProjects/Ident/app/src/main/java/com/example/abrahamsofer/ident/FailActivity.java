@@ -17,9 +17,10 @@ public class FailActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_error);
-
+        String error = null;
         final Bundle b = this.getIntent().getExtras();
-        String error = b.getString("error");
+        if(b != null && b.containsKey("error"))
+           error  = b.getString("error");
         if(error!= null) {
             TextView errorText = (TextView) findViewById(R.id.editText3);
             errorText.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
