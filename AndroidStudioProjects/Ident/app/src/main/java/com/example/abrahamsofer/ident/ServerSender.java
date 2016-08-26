@@ -166,6 +166,19 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
             response =  ServerSender.post(this.server,jsonStr);
             if(response != null) {
                 JSONObject jsonRes  = new JSONObject(response);
+
+                if(jsonRes.has("Message")) {
+                    String error  = jsonRes.getString("Message");
+                    if(error.compareTo("User not found!") == 0){
+                        final Bundle dataError = new Bundle();
+                        dataError.putString("error","User not found");
+                        Intent in  = new Intent(context,FailActivity.class);
+                        in.putExtras(dataError);
+                        context.startActivity(in);
+                        ((Activity)context).finish();
+                        return null;
+                    }
+                }
                 Bundle userData = new Bundle();
                 userData.putString("name",jsonRes.getString("FirstName"));
                 userData.putString("email",jsonRes.getString("Email"));
@@ -185,6 +198,7 @@ public class ServerSender extends AsyncTask<File, Void, Void> {
             }
         }
         catch(Exception e) {
+
             Intent in  = new Intent(context,FailActivity.class);
             context.startActivity(in);
             ((Activity)context).finish();

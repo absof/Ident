@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/editText6"
             android:text=""
-            android:layout_gravity="left|top|bottom|center|right"
+            android:layout_gravity="center"
             android:textColor="#fdfafa"
             android:textSize="24dp"
             android:layout_alignTop="@+id/editText2"

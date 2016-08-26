@@ -30,7 +30,7 @@ public class QuestionActivity extends Activity {
 
         final EditText editText = (EditText) findViewById(R.id.answerText);
         editText.setHint("Enter email");
-
+        final Bundle userData = new Bundle();
         ImageButton button = (ImageButton) findViewById(R.id.confirm);
         button.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -47,7 +47,9 @@ public class QuestionActivity extends Activity {
                     ((Activity)context).finish();
                 }else{
                     //Lauch FailActivity
+                    userData.putString("error","Incorrect data");
                     Intent in  = new Intent(context,FailActivity.class);
+                    in.putExtras(userData);
                     context.startActivity(in);
                     ((Activity)context).finish();
                 }

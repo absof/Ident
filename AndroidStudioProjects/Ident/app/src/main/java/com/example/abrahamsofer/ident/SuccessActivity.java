@@ -3,6 +3,7 @@ package com.example.abrahamsofer.ident;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,7 +23,9 @@ public class SuccessActivity extends Activity {
         TextView order  = (TextView) findViewById(R.id.editText4);
         Bundle b = this.getIntent().getExtras();
         String name = b.getString("name");
+        text.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
         text.setText("Hi " + name.toString()+ ",");
+
         if(b.containsKey("orderID") ) {
             String orderID = b.getString("orderID");
             if(!orderID.isEmpty()){
