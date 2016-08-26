@@ -62,6 +62,7 @@
         import android.view.ViewGroup;
         import android.widget.EditText;
         import android.widget.ImageButton;
+        import android.widget.ImageView;
         import android.widget.TextView;
         import android.widget.Toast;
 
@@ -223,11 +224,16 @@ public class Camera2Fragment extends Fragment
      */
 
     // keeps track of wether at pin or price stage
-    private boolean priceTick = true;
+    //private boolean priceTick = true; not used for trial we only have pin
+
+
+    private ImageView[] corners = new ImageView[4];
+
+
     Boolean type = true; //false front Camera
     private ImageButton button;
     private ImageButton modeCamera;
-    private String price;
+    private String price = "0"; //not relevant for trial
 
     private String emailFromServer;
 
@@ -490,6 +496,10 @@ public class Camera2Fragment extends Fragment
         txt = (EditText) view.findViewById(R.id.editText);
         button = (ImageButton) view.findViewById(R.id.picture);
         modeCamera = (ImageButton) view.findViewById(R.id.imageButton);
+        corners[0] = (ImageView) view.findViewById(R.id.tlc);
+        corners[1] = (ImageView) view.findViewById(R.id.trc);
+        corners[2] = (ImageView) view.findViewById(R.id.lbc);
+        corners[3] = (ImageView) view.findViewById(R.id.rbc);
         return view;
     }
 
@@ -1057,36 +1067,22 @@ public class Camera2Fragment extends Fragment
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onClick(View view) {
-        if (priceTick) {
-            priceTick = false;
-            price = txt.getText().toString();
+        // Check the contents of the editView and then send it to server
 
+        txt.setHint("Enter your Pin");
 
-            txt.setText("");
-            //
-            // Check the contents of the editView and then send it to server
+        pin = txt.getText().toString();
+        takePicture();
+        try {
+            Thread.sleep(2000); // to avoid crash, waiting until file saved  - temporarily solution.
+            new ServerSender(this.getContext(),serverAddress, pin, price).execute(mFile);
 
-            txt.setHint("Enter your Pin");
-
-            // send pin to server!
-
-
-        }else{
-
-
-
-            pin = txt.getText().toString();
-            takePicture();
-            try {
-                Thread.sleep(2000); // to avoid crash, waiting until file saved  - temporarily solution.
-                new ServerSender(this.getContext(),serverAddress, pin, price).execute(mFile);
-
-            }catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
+        }catch (Exception e) {
+            e.printStackTrace();
         }
+
+
+
 
     }
 
