@@ -22,11 +22,11 @@ public class SuccessActivity extends Activity {
         TextView order  = (TextView) findViewById(R.id.editText4);
         Bundle b = this.getIntent().getExtras();
         String name = b.getString("name");
-        text.setText("Hi, " + name.toString());
+        text.setText("Hi " + name.toString()+ ",");
         if(b.containsKey("orderID") ) {
             String orderID = b.getString("orderID");
             if(!orderID.isEmpty()){
-                order.setText("your order is " + orderID);
+                order.setText("order # " + orderID);
             }
         }
         Button okay  = (Button) findViewById(R.id.button33);
